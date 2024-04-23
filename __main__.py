@@ -1,11 +1,65 @@
 import  json
 from typing import Any
+
+
+
+
 class NODE:
     def __init__(self):
         pass
 
-    def __setattr__(self, key:str, value:Any):
-        super().__setattr__(key,value)
+    def create_dict(self,node:"NODE|str",items:list[Any]|dict[Any,Any]):
+
+        for key, item in items.items():
+            if node == "master":
+                if isinstance(item,dict):
+                    self.__setattr__(key,NODE(),private_set=True)
+                    self.create_dict(self.__getattribute__(key),item)
+                elif isinstance(item,list):
+                    self.__setattr__(key,self.create_list_in_json(item),private_set=True)
+
+                else:
+                    self.__setattr__(key, item,private_set=True)
+
+            else:
+                if isinstance(item, dict):
+                    node.__setattr__(key,NODE(),private_set=True)
+                    self.create_dict(node.__getattribute__(key),item)
+                elif isinstance(item,list):
+                    node.__setattr__(key,self.create_list_in_json(item),private_set=True)
+                else:
+                    node.__setattr__(key,item,private_set=True)
+    
+    def create_list_in_json(self,item_list:list[Any])->list[Any]:
+
+        for item in item_list:
+
+            if isinstance(item,list):
+                self.create_list_in_json(item)
+            elif isinstance(item,dict):
+                list_index = item_list.index(item)
+                item_list[list_index] = NODE()
+                self.create_dict(item_list[list_index],item)
+        
+        return item_list
+
+    def __setattr__(self, key:str, value:Any,private_set:bool=False):
+
+        if private_set:
+            super().__setattr__(key,value)
+            print("private")
+        elif isinstance(value,dict):
+            print("dict")
+            self.create_dict("master",{key:value})
+
+        elif isinstance(value,list):
+            print("list")
+            self.__setattr__(key,self.create_list_in_json(value),private_set=True)
+        else:
+            super().__setattr__(key,value)
+
+
+        
 
     def __repr__(self):
         return self.__dict__.__str__()
@@ -18,34 +72,34 @@ class JSON:
             pass
         elif isinstance(json,list):
 
-            self.list = self.create_list_in_json( json)
+            self.__setattr__("list",self.create_list_in_json( json),private_set=True) 
         else:
             self.create_dict("master",json)
 
 
 
 
-    def create_dict(self,node:NODE,items:list[Any]|dict[Any,Any]):
+    def create_dict(self,node:NODE|str,items:list[Any]|dict[Any,Any]):
 
         for key, item in items.items():
             if node == "master":
                 if isinstance(item,dict):
-                    self.__setattr__(key,NODE())
-                    self.create_json(self.__getattribute__(key),item)
+                    self.__setattr__(key,NODE(),private_set=True)
+                    self.create_dict(self.__getattribute__(key),item)
                 elif isinstance(item,list):
-                    self.__setattr__(key,self.create_list_in_json(item))
+                    self.__setattr__(key,self.create_list_in_json(item),private_set=True)
 
                 else:
-                    self.__setattr__(key, item)
+                    self.__setattr__(key, item,private_set=True)
 
             else:
                 if isinstance(item, dict):
-                    node.__setattr__(key,NODE())
-                    self.create_json(node.__getattribute__(key),item)
+                    node.__setattr__(key,NODE(),private_set=True)
+                    self.create_dict(node.__getattribute__(key),item)
                 elif isinstance(item,list):
-                    node.__setattr__(key,self.create_list_in_json(item))
+                    node.__setattr__(key,self.create_list_in_json(item),private_set=True)
                 else:
-                    node.__setattr__(key,item)
+                    node.__setattr__(key,item,private_set=True)
 
     def create_list_in_json(self,item_list:list[Any])->list[Any]:
 
@@ -63,18 +117,35 @@ class JSON:
     def load(self):
         pass
 
-    def __setattr__(self, key, value):
-        super().__setattr__(key,value)
+    def __setattr__(self, key, value,private_set:bool=False):
+        if private_set:
+            super().__setattr__(key,value)
+        elif isinstance(value,dict):
+            self.create_dict("master",{key:value})
+
+        elif isinstance(value,list):
+            self.__setattr__(key,self.create_list_in_json(value))
+        else:
+            super().__setattr__(key,value)
+
 
     def __repr__(self):
         return self.__dict__.__str__()
 
+    def __getitem__(self,item:slice):
+        return self.list[item]
 
-with open("quote.json","r") as f:
+
+
+with open("test/json/test1.json","r") as f:
     d = json.load(f)
 
 
 
 p = JSON(d)
 
-print(p[1])
+print()
+p[0].person.age = 23
+p[0].person.age +=1
+print(p[0].person.age)
+
