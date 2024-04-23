@@ -47,13 +47,10 @@ class NODE:
 
         if private_set:
             super().__setattr__(key,value)
-            print("private")
-        elif isinstance(value,dict):
-            print("dict")
-            self.create_dict("master",{key:value})
 
+        elif isinstance(value,dict):
+            self.create_dict("master",{key:value})
         elif isinstance(value,list):
-            print("list")
             self.__setattr__(key,self.create_list_in_json(value),private_set=True)
         else:
             super().__setattr__(key,value)
@@ -134,14 +131,20 @@ class JSON:
 
 
 
-with open("test/json/test1.json","r") as f:
+with open("test/json/pokedex.json","r",encoding="UTF-8") as f:
     d = json.load(f)
 
+print(len(d))
 
+import cProfile 
 
+profiler = cProfile.Profile()
+profiler.enable()
 p = JSON(d)
+profiler.disable()
+profiler.print_stats("cumtime")
 
-print(p.person.items())
+print(p[0])
 
 
 
