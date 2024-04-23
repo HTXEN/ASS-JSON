@@ -2,7 +2,7 @@ import  json
 from typing import Any
 
 
-
+#TODO: do so you can get attribute
 
 class NODE:
     def __init__(self):
@@ -76,6 +76,8 @@ class JSON:
         else:
             self.create_dict("master",json)
 
+    
+
 
 
 
@@ -144,8 +146,8 @@ with open("test/json/test1.json","r") as f:
 
 p = JSON(d)
 
-print()
-p[0].person.age = 23
-p[0].person.age +=1
-print(p[0].person.age)
+print(p.person.items())
+
+
+
 
