@@ -1,9 +1,10 @@
 import  json
+from typing import Any
 class NODE:
     def __init__(self):
         pass
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key:str, value:Any):
         super().__setattr__(key,value)
 
     def __repr__(self):
@@ -11,10 +12,11 @@ class NODE:
 
 class JSON:
 
-    def __init__(self, json):
+    def __init__(self, json:list[Any]|dict[Any,Any]|None=None):
 
-
-        if isinstance(json,list):
+        if json is None:
+            pass
+        elif isinstance(json,list):
 
             self.list = self.create_list_in_json( json)
         else:
@@ -23,7 +25,7 @@ class JSON:
 
 
 
-    def create_dict(self,node,items,to_list=False):
+    def create_dict(self,node:NODE,items:list[Any]|dict[Any,Any]):
 
         for key, item in items.items():
             if node == "master":
@@ -45,7 +47,7 @@ class JSON:
                 else:
                     node.__setattr__(key,item)
 
-    def create_list_in_json(self,item_list):
+    def create_list_in_json(self,item_list:list[Any])->list[Any]:
 
         for item in item_list:
 
@@ -57,6 +59,9 @@ class JSON:
                 self.create_dict(item_list[list_index],item)
 
         return  item_list
+    
+    def load(self):
+        pass
 
     def __setattr__(self, key, value):
         super().__setattr__(key,value)
