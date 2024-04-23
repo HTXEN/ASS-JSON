@@ -1,0 +1,39 @@
+[{
+    "person": {
+      "name": "John",
+      "age": 30,
+      "address": {
+        "street": "123 Main St",
+        "city": "Anytown",
+        "country": "USA"
+      },
+      "friends": [
+        {
+          "name": "Alice",
+          "age": 28,
+          "address": {
+            "street": "456 Elm St",
+            "city": "Othertown",
+            "country": "USA"
+          }
+        },
+        {
+          "name": "Bob",
+          "age": 32,
+          "is_student": true,
+          "address": {
+            "street": "789 Oak St",
+            "city": "AnotherTown",
+            "country": "USA"
+          },
+          "scores": [85, 90, 88],
+          "grades": {
+            "math": "B",
+            "science": "A",
+            "history": "B"
+          }
+        }
+      ]
+    }
+  }
+  ]
