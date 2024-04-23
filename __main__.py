@@ -76,11 +76,6 @@ class JSON:
         else:
             self.create_dict("master",json)
 
-    
-
-
-
-
     def create_dict(self,node:NODE|str,items:list[Any]|dict[Any,Any]):
 
         for key, item in items.items():
