@@ -1,6 +1,7 @@
 import  json
 from typing import Any
-
+import sys
+import inspect
 
 #TODO: do so you can get attribute
 
@@ -14,7 +15,7 @@ class NODE:
             if node == "master":
                 if isinstance(item,dict):
                     self.__setattr__(key,NODE(),private_set=True)
-                    self.create_dict(self.__getattribute__(key),item)
+                    self.create_dict(self.__getattribute__(key,private_set=True),item)
                 elif isinstance(item,list):
                     self.__setattr__(key,self.create_list_in_json(item),private_set=True)
 
@@ -24,7 +25,7 @@ class NODE:
             else:
                 if isinstance(item, dict):
                     node.__setattr__(key,NODE(),private_set=True)
-                    self.create_dict(node.__getattribute__(key),item)
+                    self.create_dict(node.__getattribute__(key,private_set=True),item)
                 elif isinstance(item,list):
                     node.__setattr__(key,self.create_list_in_json(item),private_set=True)
                 else:
@@ -55,21 +56,22 @@ class NODE:
         else:
             super().__setattr__(key,value)
 
-
-        
-
     def __repr__(self):
         return self.__dict__.__str__()
+    
+    def __getattribute__(self, name: str,private_set:bool=False) -> Any:
+        if private_set:
+            return super().__getattribute__(name,private_set=True)
 
 class JSON:
 
     def __init__(self, json:list[Any]|dict[Any,Any]|None=None):
-
+        
         if json is None:
             pass
         elif isinstance(json,list):
+            self.__getattribute__("__setattr__",private_set=True)("list",self.__getattribute__("create_list_in_json")(json),private_set=True)
 
-            self.__setattr__("list",self.create_list_in_json( json),private_set=True) 
         else:
             self.create_dict("master",json)
 
@@ -79,7 +81,7 @@ class JSON:
             if node == "master":
                 if isinstance(item,dict):
                     self.__setattr__(key,NODE(),private_set=True)
-                    self.create_dict(self.__getattribute__(key),item)
+                    self.create_dict(self.__getattribute__(key,),item)
                 elif isinstance(item,list):
                     self.__setattr__(key,self.create_list_in_json(item),private_set=True)
 
@@ -89,7 +91,7 @@ class JSON:
             else:
                 if isinstance(item, dict):
                     node.__setattr__(key,NODE(),private_set=True)
-                    self.create_dict(node.__getattribute__(key),item)
+                    self.create_dict(node.__getattribute__(key,private_set=True),item)
                 elif isinstance(item,list):
                     node.__setattr__(key,self.create_list_in_json(item),private_set=True)
                 else:
@@ -128,6 +130,13 @@ class JSON:
 
     def __getitem__(self,item:slice):
         return self.list[item]
+    
+    def __getattribute__(self, name: str,private_set:bool=False) -> Any:
+        print(name)
+        print(sys._getframe().f_back.f_locals.get(self))
+        if private_set:
+            return self.__getattribute__(name)
+
 
 
 
@@ -144,8 +153,4 @@ p = JSON(d)
 profiler.disable()
 profiler.print_stats("cumtime")
 
-print(p[0])
-
-
-
-
+p.name
